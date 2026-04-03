@@ -30,7 +30,7 @@ function onEachFeature(feature, layer) {
 
 // adding geojson by fetch
 // of course you can use jquery, axios etc.
-fetch("/map.geojson")
+fetch(".../map.geojson")
   .then((response) => response.json())
   .then((data) => {
     // use geoJSON
