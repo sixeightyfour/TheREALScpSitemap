@@ -25,16 +25,45 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 function onEachFeature(feature, layer) {
-  layer.bindPopup(feature.properties.nazwa);
+  const props = feature.properties || {};
+
+  const itemNumber = props["Item Number"] || "Unknown item";
+  const slug = props["Slug"] || "";
+  const url = slug ? `https://scp-wiki.wikidot.com${slug}` : null;
+
+  const tooltipHtml = url
+    ? `<strong><a href="${url}" target="_blank" rel="noopener noreferrer">${itemNumber}</a></strong>`
+    : `<strong>${itemNumber}</strong>`;
+
+  layer.bindTooltip(tooltipHtml, {
+    sticky: true,
+    direction: "top",
+    opacity: 0.95,
+  });
+
+  // Optional: keep click popup too
+  if (url) {
+    layer.bindPopup(
+      `<strong>${itemNumber}</strong><br><a href="${url}" target="_blank" rel="noopener noreferrer">${slug}</a>`
+    );
+  }
 }
 
-// adding geojson by fetch
-// of course you can use jquery, axios etc.
-fetch(".../map.geojson")
-  .then((response) => response.json())
+
+fetch("./map.geojson")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(`Failed to load GeoJSON: ${response.status}`);
+    }
+    return response.json();
+  })
   .then((data) => {
-    // use geoJSON
-    L.geoJSON(data, {
-      onEachFeature: onEachFeature,
+    const geoJsonLayer = L.geoJSON(data, {
+      onEachFeature,
     }).addTo(map);
+
+    map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] });
+  })
+  .catch((error) => {
+    console.error(error);
   });
