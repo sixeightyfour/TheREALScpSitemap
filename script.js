@@ -5,14 +5,14 @@
 
 // config map
 const config = {
-  minZoom: 1,
+  minZoom: 2,
   maxZoom: 100,
 };
 // magnification with which the map will start
-const zoom = 18;
+const zoom = 2;
 // co-ordinates
-const lat = 52.22977;
-const lng = 21.01178;
+const lat = 0;
+const lng = 0;
 
 // calling map
 const map = L.map("map", config).setView([lat, lng], zoom);
