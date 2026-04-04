@@ -50,7 +50,7 @@ function onEachFeature(feature, layer) {
 }
 
 
-fetch("./map (4).geojson")
+fetch("./map (6).geojson")
   .then((response) => {
     if (!response.ok) {
       throw new Error(`Failed to load GeoJSON: ${response.status}`);
