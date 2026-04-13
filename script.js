@@ -7,6 +7,7 @@
 const config = {
   minZoom: 2,
   maxZoom: 20,
+  worldCopyJump: true
 };
 
 // magnification with which the map will start
