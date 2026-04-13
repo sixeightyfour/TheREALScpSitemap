@@ -66,7 +66,16 @@ fetch("./ColorMap.geojson")
   .then((data) => {
     const geoJsonLayer = L.geoJSON(data, {
       pointToLayer(feature, latlng) {
-        return L.marker(latlng);
+        const color = feature.properties["marker-color"] || "rgba(0,0,0,1)";
+        
+        return L.circleMarker(latlng, {
+        radius: 6,
+        fillColor: color,
+        color: color,
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 1
+        });
       },
       
       onEachFeature(feature, layer) {
