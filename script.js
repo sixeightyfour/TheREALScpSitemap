@@ -18,8 +18,7 @@ const lng = 0;
 // calling map
 const map = L.map("map", config).setView([lat, lng], zoom);
 
-// Used to load and display tile layers on the map
-// Most tile servers require attribution, which you can set under `Layer`
+// Base Maps
 const lightTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -31,25 +30,21 @@ const darkTiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
   subdomains: "abcd",
-  maxNativeZoom: 19,
-  maxZoom: 22
+  maxZoom: 20
 });
 
+// Start in Light Mode
 lightTiles.addTo(map);
 
-L.control.layers(
-  {
-    "Light": lightTiles,
-    "Dark": darkTiles
-  }
-).addTo(map);
-
-const markers = L.markerClusterGroup({
+// Overlay Layers
+const clustered = L.markerClusterGroup({
   showCoverageOnHover: false,
   spiderfyOnMaxZoom: true,
   zoomToBoundsOnClick: true,
   disableClusteringAtZoom: 16
 });
+
+const unclustered = L.layerGroup();
 
 function makeTooltipText(feature) {
   const props = feature.properties || {};
@@ -72,6 +67,28 @@ function makePopupHtml(feature) {
   return `<strong>${itemNumber}</strong>`;
 }
 
+function pointStyle(feature, latlng) {
+  const props = feature.properties || {};
+  const color = props["marker-color"] || "rgba(0,0,0,1)";
+
+  return L.circleMarker(latlng, {
+    radius: 6,
+    fillColor: color,
+    color: color,
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 1
+  });
+}
+
+function attachFeatureEvents(feature, layer) {
+  layer.bindTooltip(makeTooltipText(feature), {
+    sticky: true,
+    direction: "top",
+    opacity: 0.95,
+  });
+  layer.bindPopup(makePopupHtml(feature));
+}
 
 fetch("./ColorMap.geojson")
   .then((response) => {
@@ -81,35 +98,36 @@ fetch("./ColorMap.geojson")
     return response.json();
   })
   .then((data) => {
-    const geoJsonLayer = L.geoJSON(data, {
-      pointToLayer(feature, latlng) {
-        const color = feature.properties["marker-color"] || "rgba(0,0,0,1)";
-        
-        return L.circleMarker(latlng, {
-        radius: 6,
-        fillColor: color,
-        color: color,
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 1
-        });
-      },
-      
-      onEachFeature(feature, layer) {
-        layer.bindTooltip(makeTooltipText(feature), {
-          sticky: true,
-          direction: "top",
-          opacity: 0.95,
-        });
-        layer.bindPopup(makePopupHtml(feature));
-      },
+    const geoJsonClustered = L.geoJSON(data, {
+      pointToLayer: pointStyle,
+      onEachFeature: attachFeatureEvents,
     });
 
-    markers.addLayer(geoJsonLayer);
-    map.addLayer(markers);
+    const geoJsonPlain = L.geoJSON(data, {
+      pointToLayer: pointStyle,
+      onEachFeature: attachFeatureEvents,
+    });
 
-    if (markers.getLayers().length > 0) {
-      map.fitBounds(markers.getBounds(), { padding: [20, 20] });
+    clustered.addLayer(geoJsonClustered);
+    unclustered.addLayer(geoJsonPlain);
+
+    // Start with Clustering On
+    clustered.addTo(map);
+
+    // Layer Controls
+    L.control.layers(
+      {
+        "Light": lightTiles,
+        "Dark": darkTiles
+      },
+      {
+        "Clustered": clustered,
+        "Unclustered": unclustered
+      }
+    ).addTo(map);
+
+    if (clustered.getLayers().length > 0) {
+      map.fitBounds(clustered.getBounds(), { padding: [20, 20] });
     }
   })
   .catch((error) => {
