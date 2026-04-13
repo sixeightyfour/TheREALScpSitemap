@@ -20,12 +20,29 @@ const map = L.map("map", config).setView([lat, lng], zoom);
 
 // Used to load and display tile layers on the map
 // Most tile servers require attribution, which you can set under `Layer`
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+const lightTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   maxNativeZoom: 19,
   maxZoom: 22
-}).addTo(map);
+});
+
+const darkTiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: "abcd",
+  maxNativeZoom: 19,
+  maxZoom: 22
+});
+
+lightTiles.addTo(map);
+
+L.control.layers(
+  {
+    "Light": lightTiles,
+    "Dark": darkTiles
+  }
+).addTo(map);
 
 const markers = L.markerClusterGroup({
   showCoverageOnHover: false,
