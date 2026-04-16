@@ -26,6 +26,10 @@ body {
   font-size: 14px;
 }
 
+.leaflet-container {
+  background: #878787;
+}
+
 .map-search {
   position: absolute;
   top: 12px;
