@@ -16,23 +16,26 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
     />
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-      }
-      #map {
-        width: 100%;
-        height: 100vh;
-      }
-      .leaflet-tooltip {
-        font-size: 14px;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
+    <div class="map-search">
+      <form id="search-form" class="map-search__form" autocomplete="off">
+        <label class="sr-only" for="search-input">Search map</label>
+        <input
+          id="search-input"
+          name="search"
+          type="text"
+          list="search-options"
+          placeholder="Search by Item Number or place"
+        />
+        <datalist id="search-options"></datalist>
+        <button type="submit">Search</button>
+      </form>
+      <p id="search-status" class="map-search__status" aria-live="polite"></p>
+    </div>
+
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
