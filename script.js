@@ -303,7 +303,7 @@ fetch("./ColorMap3.geojson")
     }
 
     searchStatus.textContent =
-      "Search by SCP Number (\'SCP-XXXX\') or location.";
+      "Enter an article number or location, then press Search.";
   })
   .catch((error) => {
     console.error(error);
