@@ -225,7 +225,7 @@ searchForm.addEventListener("submit", async (event) => {
   const query = searchInput.value.trim();
 
   if (!query) {
-    searchStatus.textContent = "Enter an Article Number (\'SCP-XXXX\') or place.";
+    searchStatus.textContent = "Enter an Article Number or Place.";
     return;
   }
 
