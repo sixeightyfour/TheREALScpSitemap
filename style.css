@@ -29,7 +29,7 @@ body {
 .map-search {
   position: absolute;
   top: 12px;
-  left: 12px;
+  left: 50px;
   z-index: 1000;
   width: min(420px, calc(100vw - 24px));
   padding: 10px;
