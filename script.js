@@ -261,7 +261,7 @@ searchForm.addEventListener("submit", async (event) => {
   }
 });
 
-fetch("./ColorMap14.geojson")
+fetch("./ColorMap15.geojson")
   .then((response) => {
     if (!response.ok) {
       throw new Error(`Failed to load GeoJSON: ${response.status}`);
